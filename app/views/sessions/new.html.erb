@@ -1,0 +1,17 @@
+<% content_for :title, "Entrar" %>
+<div class="login-shell">
+  <div class="cover">
+    <%= image_tag "pista.jpg", alt: "", fetchpriority: "high" %>
+    <div class="cover-copy"><span class="line"></span><h2>Diário de<br><em>treino.</em></h2></div>
+  </div>
+  <section class="login-panel">
+    <div class="eyebrow"><i></i> Acesso pessoal</div>
+    <h1>Entrar</h1>
+    <p class="muted">Acesse seus treinos e registros diários.</p>
+    <%= form_with url: session_path, class: "stack" do |f| %>
+      <label>E-mail<%= f.email_field :email, required: true, autocomplete: "username", placeholder: "seu@email.com", value: params[:email] %></label>
+      <label>Senha<%= f.password_field :password, required: true, autocomplete: "current-password" %></label>
+      <%= f.submit "Entrar no FitTracker", class: "primary" %>
+    <% end %>
+  </section>
+</div>

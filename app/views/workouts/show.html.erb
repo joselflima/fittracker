@@ -1,0 +1,30 @@
+<% content_for :title, workout_name(@workout) %>
+<header class="page-heading"><p class="eyebrow"><i></i> <%= @workout.started_at.strftime("%d/%m/%Y · %H:%M") %> · <%= @workout.finished_at? ? "Finalizado" : "Em andamento" %></p><h1><%= workout_name(@workout) %><span>.</span></h1></header>
+<section class="glass panel timer"><div class="card-title"><%= icon(:clock) %><h2>Tempo de sessão</h2></div>
+  <% if @workout.finished_at? %><p class="digits"><%= clock_time(@workout.elapsed_seconds) %></p>
+  <% else %><p class="digits" data-controller="timer" data-timer-start-value="<%= @workout.started_at.iso8601(3) %>"><%= clock_time(@workout.elapsed_seconds) %></p><% end %>
+</section>
+<% if @workout.running? %>
+  <% if @workout.finished_at? %><section class="glass panel"><h2>Resultado da corrida</h2><p class="result"><%= quantity @workout.distance_km %> km · <%= clock_time(@workout.run_duration) %> · <%= clock_time(@workout.pace_seconds) %> /km</p></section>
+  <% else %><section class="glass panel"><h2>Finalizar corrida</h2>
+    <%= form_with url: finish_workout_path(@workout), method: :patch, class: "stack" do |f| %>
+      <label>Distância (km)<%= f.number_field :distance_km, min: 0.001, step: "any", required: true, value: params[:distance_km] %></label>
+      <p class="muted">Para usar o cronômetro, deixe o tempo em branco. O pace será calculado em min/km.</p>
+      <div class="fields"><label>Minutos<%= f.number_field :run_minutes, min: 0, value: params[:run_minutes] %></label><label>Segundos<%= f.number_field :run_seconds, min: 0, max: 59, value: params[:run_seconds] %></label></div>
+      <%= f.submit "Finalizar corrida", class: "primary" %>
+    <% end %></section><% end %>
+<% else %>
+  <% sets = @workout.lifting_sets.order(:id).to_a %>
+  <% unless @workout.finished_at? %><section class="glass panel"><h2>Registrar série</h2>
+    <%= form_with scope: :lifting_set, url: workout_lifting_sets_path(@workout), class: "stack" do |f| %>
+      <label>Exercício<%= f.text_field :exercise, required: true, maxlength: 100, list: "exercises", placeholder: "Ex.: Supino", value: sets.last&.exercise %></label>
+      <datalist id="exercises"><% sets.map(&:exercise).uniq.each do |name| %><option value="<%= name %>"></option><% end %></datalist>
+      <div class="fields"><label>Repetições<%= f.number_field :reps, min: 1, required: true, value: sets.last&.reps %></label>
+      <label>Carga (kg)<%= f.number_field :weight, min: 0, step: "any", required: true, value: sets.last&.weight %></label></div>
+      <%= f.submit "Adicionar série", class: "primary" %>
+    <% end %></section><% end %>
+  <% sets.group_by { |s| s.exercise.downcase }.each_value do |group| %><section class="glass panel"><h2><%= group.first.exercise %></h2>
+    <table><thead><tr><th>Série</th><th>Repetições</th><th>Carga</th></tr></thead><tbody><% group.each_with_index do |set, i| %><tr><td><%= i + 1 %></td><td><%= set.reps %></td><td><%= quantity set.weight %> kg</td></tr><% end %></tbody></table>
+  </section><% end %>
+  <% unless @workout.finished_at? %><%= button_to "Finalizar treino", finish_workout_path(@workout), method: :patch, disabled: sets.empty? %><% end %>
+<% end %>

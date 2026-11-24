@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Installed on the VPS as the forced command for the FitTracker deploy key.
+set -euo pipefail
+umask 077
+IFS= read -r revision
+exec </dev/null
+[[ $revision =~ ^[0-9a-f]{40}$ ]] || exit 64
+cd /docker/fittracker
+exec 9>deploy.lock
+flock 9
+if [[ ! -d source.git ]]; then
+  git init --bare source.git
+fi
+git --git-dir=source.git fetch --depth=1 https://github.com/joselflima/fittracker.git refs/heads/main
+if [[ $(git --git-dir=source.git rev-parse FETCH_HEAD) != "$revision" ]]; then
+  echo "Revisão substituída por um push mais recente."
+  exit 0
+fi
+# Stage the exact tested tree. No SSH credentials or runtime secrets enter the build context.
+git --git-dir=source.git archive "$revision" | docker build --tag "fittracker:$revision" -
+export APP_REVISION="$revision"
+docker compose -f compose.production.yaml up --detach --wait --wait-timeout 150
+echo "$revision" > deployed-revision

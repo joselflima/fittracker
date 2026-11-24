@@ -1,0 +1,16 @@
+name: fittracker-dev
+services:
+  web:
+    build:
+      context: .
+      target: development
+    ports:
+      - "127.0.0.1:${FITTRACKER_PORT:-3100}:3000"
+    volumes:
+      - .:/rails
+      - storage:/rails/storage
+    environment:
+      PIDFILE: /tmp/fittracker.pid
+    command: ["sh", "-ec", "bin/rails db:prepare && exec bin/rails server -b 0.0.0.0"]
+volumes:
+  storage:

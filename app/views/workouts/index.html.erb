@@ -1,0 +1,11 @@
+<% content_for :title, "Treinos" %>
+<header class="page-heading"><h1>Treinos<span>.</span></h1></header>
+<% if @active %>
+  <div class="glass panel"><p class="eyebrow"><i></i> Em andamento</p><h2><%= workout_name(@active) %></h2><%= link_to "Continuar treino", workout_path(@active), class: "primary" %></div>
+<% else %>
+  <h2>Iniciar sessão</h2>
+  <div class="cards two"><% [["strength", "Musculação", "Exercícios, séries e cargas.", :workouts], ["running", "Corrida", "Tempo, distância e pace.", :clock]].each do |kind, name, desc, glyph| %>
+    <article class="glass panel"><div class="card-title"><span class="tile"><%= icon(glyph) %></span><h2><%= name %></h2></div><p class="muted"><%= desc %></p><%= button_to "Iniciar #{name.downcase}", workouts_path, params: { kind: kind }, class: "primary" %></article>
+  <% end %></div>
+<% end %>
+<section><h2>Histórico de treinos</h2><% if @workouts.any? %><%= render "list", workouts: @workouts %><% else %><p class="glass empty">Seus treinos aparecerão aqui ao iniciar a primeira sessão.</p><% end %></section>

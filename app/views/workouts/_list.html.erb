@@ -1,0 +1,6 @@
+<ul class="sessions glass"><% workouts.each do |workout| %>
+  <li><%= link_to workout_path(workout) do %>
+    <div><strong><%= workout_name(workout) %></strong><small><%= workout.started_at.strftime("%d/%m/%Y · %H:%M") %></small></div>
+    <span><%= workout.finished_at? ? clock_time(workout.elapsed_seconds) : "Em andamento" %></span>
+  <% end %></li>
+<% end %></ul>

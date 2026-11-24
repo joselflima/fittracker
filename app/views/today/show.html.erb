@@ -1,0 +1,25 @@
+<% content_for :title, "Hoje" %>
+<header class="page-heading"><p class="eyebrow"><i></i> <%= l Date.current, format: "%A, %d de %B" %></p><h1>Resumo do dia<span>.</span></h1></header>
+<section class="hero glass">
+  <%= image_tag "pista.jpg", alt: "", class: "hero-image" %>
+  <div><p class="eyebrow"><%= icon(:workouts) %> Treino do dia</p>
+    <h2><%= @active ? "Em andamento" : @workouts.any? ? "Treino registrado" : "Comece seu treino" %></h2>
+    <%= link_to @active ? "Continuar treino" : @workouts.any? ? "Ver treino" : "Escolher modalidade", @active ? workout_path(@active) : @workouts.any? ? workout_path(@workouts.first) : workouts_path, class: "primary" %>
+  </div>
+</section>
+<div class="cards two">
+  <article class="glass metric water"><div class="card-title"><span class="tile"><%= icon(:water) %></span><h2>Hidratação</h2></div>
+    <p class="metric-value" id="water-total"><%= number_with_delimiter(@water) %> <small>ml</small></p>
+    <%= form_with url: water_entries_path, class: "compact" do |f| %>
+      <label>Quantidade (ml)<%= f.number_field :milliliters, min: 1, value: 250, required: true %></label><%= f.submit "Adicionar" %>
+    <% end %>
+  </article>
+  <article class="glass metric sleep"><div class="card-title"><span class="tile"><%= icon(:sleep) %></span><h2>Sono</h2></div>
+    <p class="metric-value" id="sleep-total"><%= @sleep ? format("%dh %02dmin", *@sleep.minutes.divmod(60)) : "—" %></p>
+    <%= form_with url: sleep_entry_path, class: "compact" do |f| %>
+      <label>Horas<%= f.number_field :hours, min: 0, max: 24, value: @sleep&.minutes&.div(60), required: true %></label>
+      <label>Minutos<%= f.number_field :minutes, min: 0, max: 59, value: @sleep&.minutes.to_i % 60, required: true %></label><%= f.submit "Salvar" %>
+    <% end %>
+  </article>
+</div>
+<% if @workouts.any? %><section><h2>Sessões de hoje</h2><%= render "workouts/list", workouts: @workouts %></section><% end %>

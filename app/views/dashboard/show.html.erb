@@ -1,0 +1,15 @@
+<% content_for :title, "Evolução" %>
+<header class="page-heading"><div class="eyebrow"><i></i> Musculação</div><h1>Evolução de carga<span>.</span></h1>
+  <p class="muted">Maior carga por dia, com os exercícios mais praticados primeiro.</p></header>
+<% if @history.empty? %><div class="glass empty"><%= icon(:dashboard) %><h2>Seu primeiro gráfico</h2><p>Finalize um treino de musculação com pelo menos uma série para acompanhar a carga.</p><%= link_to "Abrir treinos", workouts_path, class: "primary" %></div><% end %>
+<div class="cards two"><% @history.each do |name, history| %>
+  <article class="glass panel exercise"><h2><%= name %></h2><p class="metric-value"><%= quantity history.values.last %> <small>kg</small></p>
+    <% points = chart_points(history) %>
+    <svg class="chart" viewBox="0 0 320 90" role="img" aria-label="Evolução da carga de <%= name %>, em kg. Valores disponíveis na tabela.">
+      <path d="M5 10H315M5 45H315M5 80H315" stroke="currentColor" opacity=".15" fill="none"/>
+      <polyline fill="none" stroke="currentColor" stroke-width="2" points="<%= points.map { |pair| pair.join(',') }.join(' ') %>"/>
+      <% points.each do |x, y| %><circle cx="<%= x %>" cy="<%= y %>" r="3" fill="currentColor"/><% end %>
+    </svg>
+    <table><thead><tr><th>Data</th><th>Carga máxima</th></tr></thead><tbody><% history.each do |day, kg| %><tr><td><%= day.strftime("%d/%m/%Y") %></td><td><%= quantity kg %> kg</td></tr><% end %></tbody></table>
+  </article>
+<% end %></div>

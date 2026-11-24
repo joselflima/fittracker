@@ -1,0 +1,11 @@
+<% content_for :title, "Exames" %>
+<header class="page-heading"><h1>Exames de sangue<span>.</span></h1></header>
+<section class="glass panel"><h2>Registrar indicador</h2>
+<%= form_with model: @result, class: "stack" do |f| %>
+  <div class="fields"><label>Indicador<%= f.text_field :indicator, required: true, placeholder: "Ex.: Ferritina", maxlength: 100 %></label><label>Data da coleta<%= f.date_field :measured_on, value: @result.measured_on || Date.current, max: Date.current, required: true %></label></div>
+  <div class="fields"><label>Resultado<%= f.number_field :value, step: "any", required: true %></label><label>Unidade<%= f.text_field :unit, placeholder: "Ex.: ng/mL", required: true, maxlength: 100 %></label></div>
+  <div><%= f.submit "Salvar resultado", class: "primary" %></div>
+<% end %></section>
+<section><h2>Histórico por indicador</h2>
+<% if @groups.empty? %><p class="glass empty">Seus resultados serão agrupados por indicador e unidade.</p><% end %>
+<div class="cards two"><% @groups.each_value do |results| %><article class="glass panel"><h2><%= results.first.indicator %></h2><table><thead><tr><th>Coleta</th><th>Resultado (<%= results.first.unit %>)</th></tr></thead><tbody><% results.each do |result| %><tr><td><%= result.measured_on.strftime("%d/%m/%Y") %></td><td><%= quantity result.value %></td></tr><% end %></tbody></table></article><% end %></div></section>

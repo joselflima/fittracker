@@ -1,0 +1,8 @@
+pt-BR:
+  date:
+    day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
+    month_names: [~, janeiro, fevereiro, março, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro]
+  number:
+    format:
+      separator: ","
+      delimiter: "."

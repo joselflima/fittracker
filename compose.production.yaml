@@ -1,0 +1,38 @@
+name: fittracker
+services:
+  web:
+    image: fittracker:${APP_REVISION:?Informe a revisão da aplicação}
+    restart: unless-stopped
+    environment:
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Defina o segredo Rails na VPS}
+      APP_HOST: fittracker.srv1625057.hstgr.cloud
+    volumes:
+      - storage:/rails/storage
+    networks:
+      - traefik
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:3000/up"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 30s
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: shared_net
+      traefik.http.routers.fittracker.rule: Host(`fittracker.srv1625057.hstgr.cloud`)
+      traefik.http.routers.fittracker.entrypoints: websecure
+      traefik.http.routers.fittracker.tls.certresolver: letsencrypt
+      traefik.http.routers.fittracker.service: fittracker
+      traefik.http.routers.fittracker-http.rule: Host(`fittracker.srv1625057.hstgr.cloud`)
+      traefik.http.routers.fittracker-http.entrypoints: web
+      traefik.http.routers.fittracker-http.middlewares: fittracker-https
+      traefik.http.routers.fittracker-http.service: fittracker
+      traefik.http.middlewares.fittracker-https.redirectscheme.scheme: https
+      traefik.http.middlewares.fittracker-https.redirectscheme.permanent: "true"
+      traefik.http.services.fittracker.loadbalancer.server.port: "3000"
+volumes:
+  storage:
+networks:
+  traefik:
+    external: true
+    name: shared_net
