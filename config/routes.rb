@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
+  get "manifest.webmanifest" => "rails/pwa#manifest", defaults: { format: :json }, as: :pwa_manifest
   root "today#show"
   resource :session, only: %i[new create destroy]
   resources :water_entries, only: :create
