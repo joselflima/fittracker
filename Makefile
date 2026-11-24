@@ -1,3 +1,8 @@
+# Docker Desktop on macOS may install its credential helper outside the shell PATH.
+ifneq ($(wildcard /Applications/Docker.app/Contents/Resources/bin/docker-credential-desktop),)
+export PATH := $(PATH):/Applications/Docker.app/Contents/Resources/bin
+endif
+
 .DEFAULT_GOAL := help
 .PHONY: help up down logs ps test lint check user
 help:
