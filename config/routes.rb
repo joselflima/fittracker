@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get "manifest.webmanifest" => "rails/pwa#manifest", defaults: { format: :json }, as: :pwa_manifest
   root "today#show"
   resource :session, only: %i[new create destroy]
+  resource :profile, only: %i[show update], path: "perfil"
   resources :water_entries, only: :create
   resource :sleep_entry, only: :create
   resources :workouts, only: %i[index show create] do

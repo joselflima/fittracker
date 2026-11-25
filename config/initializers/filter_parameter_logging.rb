@@ -8,3 +8,4 @@ Rails.application.config.filter_parameters += [
 ]
 
 Rails.application.config.filter_parameters += %i[indicator value unit measured_on hours minutes milliliters exercise weight reps]
+Rails.application.config.filter_parameters += %i[display_name birth_date weight_kg height_cm]

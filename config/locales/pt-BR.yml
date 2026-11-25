@@ -1,4 +1,17 @@
 pt-BR:
+  activerecord:
+    attributes:
+      user:
+        display_name: Nome
+        birth_date: Data de nascimento
+        weight_kg: Peso atual (kg)
+        height_cm: Altura (cm)
+    errors:
+      models:
+        user:
+          invalid_profile_measure: deve ser um número maior que zero
+          invalid_profile_date: deve ser uma data válida
+          future_profile_date: deve ser hoje ou uma data anterior
   date:
     day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
     month_names: [~, janeiro, fevereiro, março, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro]

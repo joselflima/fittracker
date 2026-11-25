@@ -1,0 +1,35 @@
+<% content_for :title, "Perfil" %>
+<header class="page-heading"><h1>Perfil<span>.</span></h1></header>
+
+<section class="glass panel" aria-label="Dados pessoais">
+  <%= form_with model: @user, scope: :profile, url: profile_path, method: :patch, class: "stack" do |form| %>
+    <% if @user.errors.any? %>
+      <ul class="flash alert profile-errors" role="alert" id="profile-errors">
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% error_attributes = ->(field) { { invalid: true, describedby: "profile-errors" } if @user.errors.include?(field) } %>
+    <div class="cards two profile-fields">
+      <div class="profile-field">
+        <%= form.label :display_name %>
+        <%= form.text_field :display_name, value: @profile_inputs.fetch(:display_name, @user.display_name), autocomplete: "name" %>
+      </div>
+      <div class="profile-field">
+        <%= form.label :birth_date %>
+        <%= form.date_field :birth_date, max: Date.current, autocomplete: "bday", aria: error_attributes.call(:birth_date) %>
+      </div>
+      <% User::PROFILE_MEASURES.each do |field| %>
+        <% measure = @user.public_send(field) %>
+        <div class="profile-field">
+          <%= form.label field %>
+          <%= form.text_field field, value: @profile_inputs.fetch(field) { quantity(measure, delimiter: "") if measure }, inputmode: "decimal", aria: error_attributes.call(field) %>
+        </div>
+      <% end %>
+    </div>
+
+    <div><%= form.submit "Salvar perfil", class: "primary" %></div>
+  <% end %>
+</section>
