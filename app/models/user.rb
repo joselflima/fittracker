@@ -14,6 +14,31 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 12 }, allow_nil: true
   validate :validate_profile_measures, :validate_birth_date
 
+  # DGE Wasser: idade mínima, ml/kg, água das bebidas e dos alimentos (ml/dia).
+  FLUID_REFERENCE = [
+    [ 65, 30, 1310, 680 ], [ 51, 30, 1230, 740 ], [ 25, 35, 1410, 860 ],
+    [ 19, 35, 1470, 890 ], [ 18, 40, 1530, 920 ]
+  ].freeze
+
+  def daily_fluid_ml
+    return unless birth_date && weight_kg
+
+    today = Date.current
+    row = FLUID_REFERENCE.find { |years, *| birth_date <= today.years_ago(years).to_date }
+    return unless row
+
+    _, ml_per_kg, drinks, food = row
+    (weight_kg * ml_per_kg * drinks / (drinks + food) / 50).round * 50
+  end
+
+  def water_history
+    totals = Hash.new(0)
+    water_entries.order(:created_at).pluck(:created_at, :milliliters).each do |time, ml|
+      totals[time.in_time_zone.to_date] += ml
+    end
+    totals
+  end
+
   def exercise_history
     rows = LiftingSet.joins(:workout)
       .where(workouts: { user_id: id, kind: "strength" }).where.not(workouts: { finished_at: nil })

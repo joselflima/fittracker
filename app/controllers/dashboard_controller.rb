@@ -1,5 +1,10 @@
 class DashboardController < ApplicationController
   def show
-    @history = current_user.exercise_history
+    @tab = params[:aba] == "hidratacao" ? "hidratacao" : "carga"
+    if @tab == "hidratacao"
+      @water_history = current_user.water_history
+    else
+      @history = current_user.exercise_history
+    end
   end
 end

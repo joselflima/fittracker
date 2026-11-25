@@ -21,7 +21,7 @@
       <% if current_user %>
         <nav aria-label="Navegação principal">
           <% [[root_path, :today, "Hoje"], [workouts_path, :workouts, "Treinos"], [dashboard_path, :dashboard, "Evolução"], [lab_results_path, :labs, "Exames"], [profile_path, :profile, "Perfil"]].each do |path, glyph, label| %>
-            <% selected = current_page?(path) || (glyph == :workouts && controller_name == "workouts") || (glyph == :profile && controller_name == "profiles") %>
+            <% selected = current_page?(path) || (glyph == :workouts && controller_name == "workouts") || (glyph == :dashboard && controller_name == "dashboard") || (glyph == :profile && controller_name == "profiles") %>
             <%= link_to path, aria: { current: selected ? "page" : nil } do %><%= icon(glyph) %><span><%= label %></span><% end %>
           <% end %>
         </nav>

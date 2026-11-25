@@ -9,7 +9,22 @@
 </section>
 <div class="cards two">
   <article class="glass metric water"><div class="card-title"><span class="tile"><%= icon(:water) %></span><h2>Hidratação</h2></div>
-    <p class="metric-value" id="water-total"><%= number_with_delimiter(@water) %> <small>ml</small></p>
+    <div class="metric-readout">
+      <p class="metric-caption">Água registrada hoje</p>
+      <p class="metric-value" id="water-total"><%= number_with_delimiter(@water) %> <small>ml</small></p>
+    </div>
+    <div class="water-meta">
+      <% if (estimate = current_user.daily_fluid_ml) %>
+        <% progress = [ (@water.to_f / estimate * 100).round, 100 ].min %>
+        <div class="water-progress" aria-hidden="true"><div class="water-progress-bar" style="width: <%= progress %>%"></div></div>
+        <p class="metric-note">Estimativa de líquidos para hoje: <strong><%= number_with_delimiter(estimate, delimiter: ".") %> ml</strong></p>
+      <% elsif current_user.birth_date && current_user.birth_date > Date.current.years_ago(18).to_date %>
+        <p class="metric-note">A estimativa está disponível a partir dos 18 anos.</p>
+      <% else %>
+        <% missing = [ ("peso" unless current_user.weight_kg), ("data de nascimento" unless current_user.birth_date) ].compact %>
+        <p class="metric-note">Informe <%= missing.join(" e ") %> no <%= link_to "Perfil", profile_path, class: "inline-link" %> para ver sua estimativa.</p>
+      <% end %>
+    </div>
     <%= form_with url: water_entries_path, class: "compact" do |f| %>
       <label>Quantidade (ml)<%= f.number_field :milliliters, min: 1, value: 250, required: true %></label><%= f.submit "Adicionar" %>
     <% end %>

@@ -1,15 +1,49 @@
 <% content_for :title, "Evolução" %>
-<header class="page-heading"><div class="eyebrow"><i></i> Musculação</div><h1>Evolução de carga<span>.</span></h1>
-  <p class="muted">Maior carga por dia, com os exercícios mais praticados primeiro.</p></header>
-<% if @history.empty? %><div class="glass empty"><%= icon(:dashboard) %><h2>Seu primeiro gráfico</h2><p>Finalize um treino de musculação com pelo menos uma série para acompanhar a carga.</p><%= link_to "Abrir treinos", workouts_path, class: "primary" %></div><% end %>
-<div class="cards two"><% @history.each do |name, history| %>
-  <article class="glass panel exercise"><h2><%= name %></h2><p class="metric-value"><%= quantity history.values.last %> <small>kg</small></p>
-    <% points = chart_points(history) %>
-    <svg class="chart" viewBox="0 0 320 90" role="img" aria-label="Evolução da carga de <%= name %>, em kg. Valores disponíveis na tabela.">
-      <path d="M5 10H315M5 45H315M5 80H315" stroke="currentColor" opacity=".15" fill="none"/>
-      <polyline fill="none" stroke="currentColor" stroke-width="2" points="<%= points.map { |pair| pair.join(',') }.join(' ') %>"/>
-      <% points.each do |x, y| %><circle cx="<%= x %>" cy="<%= y %>" r="3" fill="currentColor"/><% end %>
-    </svg>
-    <table><thead><tr><th>Data</th><th>Carga máxima</th></tr></thead><tbody><% history.each do |day, kg| %><tr><td><%= day.strftime("%d/%m/%Y") %></td><td><%= quantity kg %> kg</td></tr><% end %></tbody></table>
-  </article>
-<% end %></div>
+<header class="page-heading">
+  <div class="eyebrow"><i></i> <%= @tab == "hidratacao" ? "Hidratação" : "Musculação" %></div>
+  <h1>Evolução<span>.</span></h1>
+  <nav class="subnav" aria-label="Tipo de evolução">
+    <%= link_to dashboard_path, aria: { current: (@tab == "carga" ? "page" : nil) } do %><%= icon(:workouts) %><span>Carga</span><% end %>
+    <%= link_to dashboard_path(aba: "hidratacao"), class: "water-tab", aria: { current: (@tab == "hidratacao" ? "page" : nil) } do %><%= icon(:water) %><span>Hidratação</span><% end %>
+  </nav>
+  <p class="muted"><%= @tab == "hidratacao" ? "Volume total de água registrado por dia." : "Maior carga por dia, com os exercícios mais praticados primeiro." %></p>
+</header>
+<% if @tab == "carga" %>
+  <% if @history.empty? %><div class="glass empty"><%= icon(:dashboard) %><h2>Seu primeiro gráfico</h2><p>Finalize um treino de musculação com pelo menos uma série para acompanhar a carga.</p><%= link_to "Abrir treinos", workouts_path, class: "primary" %></div><% end %>
+  <div class="cards two"><% @history.each do |name, history| %>
+    <article class="glass panel exercise"><h2><%= name %></h2><p class="metric-value"><%= quantity history.values.last %> <small>kg</small></p>
+      <% points = chart_points(history) %>
+      <svg class="chart" viewBox="0 0 320 90" role="img" aria-label="Evolução da carga de <%= name %>, em kg. Valores disponíveis na tabela.">
+        <path d="M5 10H315M5 45H315M5 80H315" stroke="currentColor" opacity=".15" fill="none"/>
+        <polyline fill="none" stroke="currentColor" stroke-width="2" points="<%= points.map { |pair| pair.join(',') }.join(' ') %>"/>
+        <% points.each do |x, y| %><circle cx="<%= x %>" cy="<%= y %>" r="3" fill="currentColor"/><% end %>
+      </svg>
+      <table><thead><tr><th>Data</th><th>Carga máxima</th></tr></thead><tbody><% history.each do |day, kg| %><tr><td><%= day.strftime("%d/%m/%Y") %></td><td><%= quantity kg %> kg</td></tr><% end %></tbody></table>
+    </article>
+  <% end %></div>
+<% else %>
+  <% if @water_history.empty? %>
+    <section class="glass empty water" id="hydration">
+      <span class="tile"><%= icon(:water) %></span>
+      <h2>Seu primeiro registro</h2>
+      <p>Seu histórico começa com o primeiro registro de água</p>
+      <%= link_to "Registrar água em Hoje", root_path, class: "primary" %>
+    </section>
+  <% else %>
+    <section class="glass panel" id="hydration">
+      <h2>Evolução da hidratação</h2>
+      <% maximum = @water_history.values.max %>
+      <svg class="chart" viewBox="0 0 <%= @water_history.size * 10 %> 100" preserveAspectRatio="none" role="img" aria-label="Água registrada por dia, em ordem cronológica. Datas e volumes na tabela.">
+        <% @water_history.values.each_with_index do |ml, index| %>
+          <% height = 100.0 * ml / maximum %>
+          <rect x="<%= index * 10 + 1 %>" y="<%= 100 - height %>" width="8" height="<%= height %>" fill="#9bdcff"/>
+        <% end %>
+      </svg>
+      <table><thead><tr><th scope="col">Data</th><th scope="col">Água registrada (ml)</th></tr></thead>
+        <tbody><% @water_history.each do |day, ml| %>
+          <tr><td><%= day.strftime("%d/%m/%Y") %></td><td><%= number_with_delimiter(ml, delimiter: ".") %></td></tr>
+        <% end %></tbody>
+      </table>
+    </section>
+  <% end %>
+<% end %>
