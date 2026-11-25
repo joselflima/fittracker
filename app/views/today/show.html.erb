@@ -3,8 +3,8 @@
 <section class="hero glass">
   <%= image_tag "pista.jpg", alt: "", class: "hero-image" %>
   <div><p class="eyebrow"><%= icon(:workouts) %> Treino do dia</p>
-    <h2><%= @active ? "Em andamento" : @workouts.any? ? "Treino registrado" : "Comece seu treino" %></h2>
-    <%= link_to @active ? "Continuar treino" : @workouts.any? ? "Ver treino" : "Escolher modalidade", @active ? workout_path(@active) : @workouts.any? ? workout_path(@workouts.first) : workouts_path, class: "primary" %>
+    <h2><%= @active ? workout_status(@active) : @workouts.any? ? "Treino registrado" : "Comece seu treino" %></h2>
+    <%= link_to @active ? "Abrir treino" : @workouts.any? ? "Ver treino" : "Escolher modalidade", @active ? workout_path(@active) : @workouts.any? ? workout_path(@workouts.first) : workouts_path, class: "primary" %>
   </div>
 </section>
 <div class="cards two">

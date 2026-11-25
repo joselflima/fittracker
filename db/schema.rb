@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_25_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_000001) do
   create_table "lab_results", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "indicator", null: false
@@ -72,6 +72,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_000000) do
     t.integer "run_duration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "paused_at"
+    t.bigint "paused_duration_ms", default: 0, null: false
     t.index ["user_id"], name: "index_workouts_on_user_id"
     t.index ["user_id"], name: "one_open_workout_per_user", unique: true, where: "finished_at IS NULL"
   end

@@ -6,8 +6,10 @@ Rails.application.routes.draw do
   resource :profile, only: %i[show update], path: "perfil"
   resources :water_entries, only: :create
   resource :sleep_entry, only: :create
-  resources :workouts, only: %i[index show create] do
+  resources :workouts, only: %i[index show create destroy] do
     patch :finish, on: :member
+    patch :pause, on: :member
+    patch :resume, on: :member
     resources :lifting_sets, only: :create
   end
   get "evolucao", to: "dashboard#show", as: :dashboard

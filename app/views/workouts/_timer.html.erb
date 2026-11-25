@@ -1,0 +1,19 @@
+<section id="<%= dom_id(workout, :timer) %>" class="glass panel timer">
+  <div class="card-title"><%= icon(:clock) %><h2>Tempo de sessão</h2></div>
+  <p class="eyebrow" role="status"><%= workout_status(workout) %></p>
+  <% if workout.finished_at? || workout.paused? %>
+    <p class="digits"><%= clock_time(workout.elapsed_seconds) %></p>
+  <% else %>
+    <p class="digits" data-controller="timer" data-timer-start-value="<%= workout.timer_started_at.iso8601(3) %>"><%= clock_time(workout.elapsed_seconds) %></p>
+  <% end %>
+  <% unless workout.finished_at? %>
+    <div class="workout-actions">
+      <% if workout.paused? %>
+        <%= button_to "Continuar treino", resume_workout_path(workout), method: :patch, class: "primary" %>
+      <% else %>
+        <%= button_to "Pausar treino", pause_workout_path(workout), method: :patch %>
+      <% end %>
+      <%= button_to "Cancelar treino", workout_path(workout), method: :delete, class: "cancel", form: { data: { turbo_confirm: "Cancelar este treino? A sessão e as séries registradas serão descartadas." } } %>
+    </div>
+  <% end %>
+</section>

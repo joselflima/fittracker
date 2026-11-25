@@ -82,6 +82,8 @@ main > section > h2 { margin: 1.8rem 0 1rem; }
 .metric-value, .digits { font-variant-numeric: tabular-nums; font-size: clamp(2.5rem, 6vw, 4.2rem); font-weight: 590; letter-spacing: -.075em; margin: .8rem 0 1.25rem; }
 .metric-value small { color: var(--muted); font-size: .38em; letter-spacing: -.025em; }
 .muted, .empty p { color: var(--muted); line-height: 1.6; }
+.workout-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+.workout-actions .cancel { color: #ffb5ad; }
 .stack { display: grid; gap: 1rem; }
 label { display: grid; gap: .2rem; font-size: .82rem; font-weight: 540; color: var(--muted); min-width: 0; }
 input:not([type=submit]) {

@@ -1,5 +1,5 @@
 class WorkoutsController < ApplicationController
-  before_action :load_workout, only: %i[show finish]
+  before_action :load_workout, only: %i[show finish pause resume destroy]
 
   def index
     @workouts = current_user.workouts.order(started_at: :desc)
@@ -28,7 +28,33 @@ class WorkoutsController < ApplicationController
     render :show, status: :unprocessable_entity
   end
 
+  def pause
+    @workout.pause!
+    render_timer
+  end
+
+  def resume
+    @workout.resume!
+    render_timer
+  end
+
+  def destroy
+    if @workout.cancel!
+      redirect_to workouts_path, notice: "Treino cancelado.", status: :see_other
+    else
+      redirect_to workout_path(@workout), status: :see_other
+    end
+  end
+
   private
+
+  def render_timer
+    if request.format.turbo_stream? && !@workout.finished_at?
+      render turbo_stream: turbo_stream.replace(helpers.dom_id(@workout, :timer), partial: "workouts/timer", locals: { workout: @workout })
+    else
+      redirect_to workout_path(@workout), status: :see_other
+    end
+  end
 
   def load_workout
     @workout = current_user.workouts.find(params[:id])

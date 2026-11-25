@@ -1,9 +1,6 @@
 <% content_for :title, workout_name(@workout) %>
-<header class="page-heading"><p class="eyebrow"><i></i> <%= @workout.started_at.strftime("%d/%m/%Y · %H:%M") %> · <%= @workout.finished_at? ? "Finalizado" : "Em andamento" %></p><h1><%= workout_name(@workout) %><span>.</span></h1></header>
-<section class="glass panel timer"><div class="card-title"><%= icon(:clock) %><h2>Tempo de sessão</h2></div>
-  <% if @workout.finished_at? %><p class="digits"><%= clock_time(@workout.elapsed_seconds) %></p>
-  <% else %><p class="digits" data-controller="timer" data-timer-start-value="<%= @workout.started_at.iso8601(3) %>"><%= clock_time(@workout.elapsed_seconds) %></p><% end %>
-</section>
+<header class="page-heading"><p class="eyebrow"><i></i> <%= @workout.started_at.strftime("%d/%m/%Y · %H:%M") %></p><h1><%= workout_name(@workout) %><span>.</span></h1></header>
+<%= render "timer", workout: @workout %>
 <% if @workout.running? %>
   <% if @workout.finished_at? %><section class="glass panel"><h2>Resultado da corrida</h2><p class="result"><%= quantity @workout.distance_km %> km · <%= clock_time(@workout.run_duration) %> · <%= clock_time(@workout.pace_seconds) %> /km</p></section>
   <% else %><section class="glass panel"><h2>Finalizar corrida</h2>

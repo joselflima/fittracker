@@ -33,6 +33,12 @@ module ApplicationHelper
     workout.running? ? "Corrida" : "Musculação"
   end
 
+  def workout_status(workout)
+    return "Finalizado" if workout.finished_at?
+
+    workout.paused? ? "Pausado" : "Em andamento"
+  end
+
   def chart_points(history)
     first, last = history.keys.minmax
     low, high = history.values.minmax

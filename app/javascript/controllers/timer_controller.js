@@ -13,7 +13,7 @@ export default class extends Controller {
   }
 
   renderTime() {
-    const elapsed = Math.max(0, Math.floor((Date.now() - Date.parse(this.startValue)) / 1000))
+    const elapsed = Math.max(0, Math.round((Date.now() - Date.parse(this.startValue)) / 1000))
     const hours = Math.floor(elapsed / 3600)
     const minutes = Math.floor(elapsed / 60) % 60
     const seconds = String(elapsed % 60).padStart(2, "0")

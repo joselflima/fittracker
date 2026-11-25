@@ -1,7 +1,7 @@
 <% content_for :title, "Treinos" %>
 <header class="page-heading"><h1>Treinos<span>.</span></h1></header>
 <% if @active %>
-  <div class="glass panel"><p class="eyebrow"><i></i> Em andamento</p><h2><%= workout_name(@active) %></h2><%= link_to "Continuar treino", workout_path(@active), class: "primary" %></div>
+  <div class="glass panel"><p class="eyebrow"><i></i> <%= workout_status(@active) %></p><h2><%= workout_name(@active) %></h2><%= link_to "Abrir treino", workout_path(@active), class: "primary" %></div>
 <% else %>
   <h2>Iniciar sessão</h2>
   <div class="cards two"><% [["strength", "Musculação", "Exercícios, séries e cargas.", :workouts], ["running", "Corrida", "Tempo, distância e pace.", :clock]].each do |kind, name, desc, glyph| %>
